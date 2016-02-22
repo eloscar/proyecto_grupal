@@ -1,0 +1,89 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <h:outputStylesheet name="./css/default.css"/>
+        <h:outputStylesheet name="./css/cssLayout.css"/>
+        <h:outputStylesheet name="./css/animate.css"/>
+        <ui:insert name="hoja_estilos"/>
+        <title> <ui:insert name="title">Facelets Template</ui:insert></title>
+    </h:head>
+
+    <h:body>
+
+        <!--Encabezado del template-->
+        <div id="top">
+            <ui:insert name="top">
+                <p:growl id="grwMensaje" widgetVar="mensaje" showDetail="true"/>
+                <div class="left">
+                    <h1 >Sistema de Gestión</h1>
+                    <div class="clock">
+                        <p:clock pattern=" dd/MM/yyyy" class="clockFecha" />
+                        <span/>
+                        <p:clock pattern=" HH:mm:ss" class="clockHora" />                         
+                    </div>
+                </div>
+
+                <div class="right">
+                    <p:graphicImage id="avatar" value="#{loginFormBean.imagenUsuario()}"  width="100px" height="100px"/>
+                    <p:tooltip value="#{loginFormBean.usuarioLogueado.nombre}" for="avatar" showEffect="clip" hideEffect="explode"/>
+                </div>
+            </ui:insert>
+        </div>
+
+        <!--Cuerpo del Template-->
+        <div id="content" class="center_content">
+
+
+            <!--En el cuerpo se divide en dos parte una en el menu-->
+            <ui:insert name="menu">
+                <h:form id="frmBarraMenu">
+                    <p:menubar>
+                        <p:menuitem value="Inicio" icon="ui-icon-home" url="/index.jsf?faces-redirect=true"/>
+                        <p:submenu label="Gestión">
+                            <p:menuitem value="Gestión Usuario" url="/sitio/usuario/usuario.jsf?faces-redirect=true"/>
+                            <p:menuitem value="Gestión Producto" url="/sitio/producto/producto.jsf?faces-redirect=true"/>
+                            <p:menuitem value="Gestión Tipo Producto" url="/sitio/producto/tipoproducto.jsf?faces-redirect=true"/>
+                            <p:menuitem value="Gestión Proveedor" url="/sitio/proveedor/proveedor.jsf?faces-redirect=true"/>
+                            <p:menuitem value="Gestión Destino" url="/sitio/destino/destino.jsf?faces-redirect=true"/>
+                            <p:menuitem value="Gestión Marca" url="/sitio/marca/marca.jsf?faces-redirect=true"/>
+                        </p:submenu>
+
+                        <p:submenu label="Operación">
+                            <p:menuitem value="Registro Ingreso" url="/sitio/ingreso/ingreso.jsf?faces-redirect=true"/>
+                            <p:menuitem value="Registro Salida" url="/sitio/egreso/egreso.jsf?faces-redirect=true"/>
+                        </p:submenu>
+                        <p:submenu label="Informe">
+
+                        </p:submenu>
+                        <p:menuitem value="Ingresar" url="/login.jsf?faces-redirect=true"/>
+                        <p:submenu label="#{loginFormBean.usuarioLogueado.nombre}">
+                            <p:menuitem value="Configurar" action="/sitio/usuario/configuracion.jsf?faces-redirect=true"/>
+                            <p:menuitem value="Salir" action="#{loginFormBean.cerrarSesion()}"/>
+                        </p:submenu>
+                    </p:menubar>
+                </h:form>
+            </ui:insert>
+            <!--contenido en esta parte sera donde va el contenido de la pagina-->
+            <ui:insert name="content">
+
+            </ui:insert>
+        </div>
+
+        <!--Por ultimo tenemos el pie de pagina--> 
+        <div id="bottom">
+            <ui:insert name="bottom">
+                <p:panel  style="text-align: center">
+                    <p:outputLabel value="Municipalidad de Palpala"/>
+                    <br/>
+                    <p:outputLabel value="Todos los derechos reservados por el equipo de Desarrollo."/>
+                </p:panel>
+            </ui:insert>
+        </div>
+    </h:body>
+</html>

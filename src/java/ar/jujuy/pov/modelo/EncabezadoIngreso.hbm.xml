@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 03/12/2015 04:50:57 by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="ar.jujuy.pov.modelo.dominio.EncabezadoIngreso" table="encabezado_ingreso" schema="public" optimistic-lock="version">
+        <id name="idIngreso" type="long">
+            <column name="id_ingreso" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="destino" class="ar.jujuy.pov.modelo.dominio.Destino" fetch="join">
+            <column name="destino_id" not-null="true" />
+        </many-to-one>
+        <many-to-one name="proveedor" class="ar.jujuy.pov.modelo.dominio.Proveedor" fetch="join">
+            <column name="proveedor_id" not-null="true" />
+        </many-to-one>
+        <many-to-one name="usuario" class="ar.jujuy.pov.modelo.dominio.Usuario" fetch="join">
+            <column name="encargado_carga_id" not-null="true" />
+        </many-to-one>
+        <property name="fechaCreacion" type="timestamp">
+            <column name="fecha_creacion" length="29" not-null="true" />
+        </property>
+        <property name="fechaCompra" type="timestamp">
+            <column name="fecha_compra" length="29" not-null="true" />
+        </property>
+        <property name="numeroFactura" type="string">
+            <column name="numero_factura" length="15" not-null="true" />
+        </property>
+        <property name="numeroRecibo" type="string">
+            <column name="numero_recibo" length="15" />
+        </property>
+        <property name="numeroOrden" type="string">
+            <column name="numero_orden" length="15" />
+        </property>
+        <property name="encargadoDepositoId" type="int">
+            <column name="encargado_deposito_id" not-null="true" />
+        </property>
+        <property name="encargadoResponsableId" type="int">
+            <column name="encargado_responsable_id" not-null="true" />
+        </property>
+    </class>
+</hibernate-mapping>

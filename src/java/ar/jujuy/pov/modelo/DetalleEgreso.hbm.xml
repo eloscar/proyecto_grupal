@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 03/12/2015 04:50:57 by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="ar.jujuy.pov.modelo.dominio.DetalleEgreso" table="detalle_egreso" schema="public" optimistic-lock="version">
+        <id name="idDetalleEgreso" type="long">
+            <column name="id_detalle_egreso" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="encabezadoEgreso" class="ar.jujuy.pov.modelo.dominio.EncabezadoEgreso" fetch="join">
+            <column name="id_encabezado" not-null="true" />
+        </many-to-one>
+        <many-to-one name="producto" class="ar.jujuy.pov.modelo.dominio.Producto" fetch="join">
+            <column name="id_producto" not-null="true" />
+        </many-to-one>
+        <property name="cantidad" type="big_decimal">
+            <column name="cantidad" precision="12" not-null="true" />
+        </property>
+    </class>
+</hibernate-mapping>

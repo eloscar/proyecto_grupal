@@ -1,0 +1,65 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+    <body>
+
+        <ui:composition template="../../resources/Template.xhtml">
+
+            <ui:define name="hoja_estilos">
+                <h:outputStylesheet name="./css/configuracion_user.css"/>
+            </ui:define>>
+            <ui:define name="title">
+                Configuración
+            </ui:define>
+            <ui:define name="content" rendered="#{loginFormBean.vereficarSesion()}">
+                <p:panel>
+                    <div class="ui-grid ui-grid-responsive">
+                        <div class="ui-grid-row">
+                            <div class="ui-grid-col-3"/>
+                            <div class="ui-grid-col-6" align="center">
+                                <p:panel header="Datos Personales" id="panelConfiguracion">
+                                    <p:graphicImage value="#{loginFormBean.imagenUsuario()}" height="200" width="200"/>
+                                    <h:form id="frmDatos_Usuario"  enctype="multipart/form-data">
+                                        <div class="ui-grid ui-grid-responsive" style="max-width: 300px">
+                                            <div class="ui-grid-row">
+                                                <div class="ui-grid-col-5"><p:outputLabel value="D.N.I.:"/></div>
+                                                <div class="ui-grid-col-10"><p:inputText value="#{loginFormBean.usuarioLogueado.dni}"/></div>
+                                            </div>
+                                            <br/>
+                                            <div class="ui-grid-row">
+                                                <div class="ui-grid-col-5"><p:outputLabel value="Nombre:"/></div>
+                                                <div class="ui-grid-col-10"><p:inputText value="#{loginFormBean.usuarioLogueado.nombre}"/></div>
+                                            </div>
+                                            <br/>
+                                            <div class="ui-grid-row">
+                                                <div class="ui-grid-col-5"><p:outputLabel value="Apellido:"/></div>
+                                                <div class="ui-grid-col-10"><p:inputText value="#{loginFormBean.usuarioLogueado.apellido}"/></div>
+                                            </div>
+                                            <br/>
+                                            <div class="ui-grid-row">
+                                                <div class="ui-grid-col-5"><p:outputLabel value="Dirección:"/></div>
+                                                <div class="ui-grid-col-10"><p:inputText value="#{loginFormBean.usuarioLogueado.direccion}"/></div>
+                                            </div>
+                                            <br/>
+                                            <div class="ui-grid-row">
+                                                <div class="ui-grid-col-10"><p:commandButton value="Cambiar Avatar" action="/sitio/usuario/cambiarImagen.jsf?faces-redirect=true"/></div>
+                                                <div class="ui-grid-col-10"><p:commandButton value="Guardar Cambios"/></div>
+                                            </div>
+                                        </div>
+                                    </h:form>
+                                </p:panel>
+                            </div>
+                            <div class="ui-grid-col-3"/>
+                        </div>
+                    </div>
+                </p:panel>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

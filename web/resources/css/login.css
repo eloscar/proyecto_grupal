@@ -1,0 +1,13 @@
+#frmLogin tr{
+    border: none;
+}
+#frmLogin td{
+    border: none;
+}
+
+#frmLogin tr:last-child td:last-child{
+    text-align: end;
+}
+#frmLogin .ui-panel-titlebar{
+    text-align: center;
+}

@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 03/12/2015 04:50:57 by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="ar.jujuy.pov.modelo.dominio.Producto" table="producto" schema="public" optimistic-lock="version">
+        <id name="idProducto" type="long">
+            <column name="id_producto" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="detalleUnidad" class="ar.jujuy.pov.modelo.dominio.DetalleUnidad" fetch="join">
+            <column name="id_detalle_unidad" not-null="true" />
+        </many-to-one>
+        <many-to-one name="marca" class="ar.jujuy.pov.modelo.dominio.Marca" fetch="join">
+            <column name="id_marca" />
+        </many-to-one>
+        <many-to-one name="tipoProducto" class="ar.jujuy.pov.modelo.dominio.TipoProducto" fetch="join">
+            <column name="id_tipo_producto" not-null="true" />
+        </many-to-one>
+        <property name="descripcion" type="string">
+            <column name="descripcion" length="100" not-null="true" />
+        </property>
+        <property name="imagen" type="string">
+            <column name="imagen" />
+        </property>
+        <property name="stock" type="big_decimal">
+            <column name="stock" precision="14" not-null="true" />
+        </property>
+        <property name="estado" type="boolean">
+            <column name="estado" not-null="true" />
+        </property>
+    </class>
+</hibernate-mapping>

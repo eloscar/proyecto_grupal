@@ -1,0 +1,228 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+
+    <body>
+
+        <ui:composition template="../../resources/Template.xhtml">
+
+            <ui:define name="title">
+                Dettalles Ingreso
+            </ui:define>
+            <ui:define name="content">
+                <p:panel rendered="#{encabezadoIngresoFormBean.vereficarSesion()}">
+
+                    <p:panel>
+                        <div class="ui-grid ui-grid-responsive">
+                            <div class="ui-grid-row">
+                                <div class="ui-grid-col-5"><p:outputLabel value="Factura Nº: #{encabezadoIngresoFormBean.encabezadoIngreso.numeroFactura}"/></div>
+
+                                <div class="ui-grid-col-5">
+                                    <p:outputLabel value="Fecha : "/>
+
+                                    <p:outputLabel value="#{encabezadoIngresoFormBean.encabezadoIngreso.fechaCompra}">
+                                        <f:convertDateTime pattern="dd/MM/YYYY"/>
+                                    </p:outputLabel>
+                                </div>
+
+                                <div class="ui-grid-col-5">
+                                    <p:outputLabel value="Usuario: #{encabezadoIngresoFormBean.encabezadoIngreso.usuario.apellido}, #{encabezadoIngresoFormBean.encabezadoIngreso.usuario.nombre}"/>
+                                </div>
+                            </div>
+                        </div>
+                    </p:panel>
+
+                    <h:form>
+                        <p:commandButton value="Nuevo Detalle" actionListener="#{detalleIngresoFormBean.limpiar()}" update=":frmNuevoDetalle">
+                            <p:resetInput target=":frmNuevoDetalle"/>
+                        </p:commandButton>
+                    </h:form>
+                    <h:form id="frmDetalle">
+
+                        <p:dataTable id="tablaDetalle" var="inDetalle" value="#{detalleIngresoFormBean.tablaDetalleIngreso}" filteredValue="#{detalleIngresoFormBean.tablaDetalleIngresoFiltro}"
+                                     selectionMode="single" rowKey="#{inDetalle.idDetalleIngreso}" paginator="12" reflow="true" emptyMessage="No se encontraron elementos.">
+
+                            <p:column headerText="Acción">
+                                <p:commandButton icon="ui-icon-pencil" actionListener="#{detalleIngresoFormBean.cargarDetalle(inDetalle)}" update=":frmEditarDetalle">
+                                    <p:resetInput target=":frmEditarDetalle"/>
+                                </p:commandButton>
+                                <p:commandButton icon="ui-icon-close" actionListener="#{detalleIngresoFormBean.eliminarDetalle(inDetalle)}" update="tablaDetalle"/>
+                            </p:column>
+
+                            <p:column headerText="Código">
+                                <p:outputLabel value="#{inDetalle.producto.idProducto}"/>
+                            </p:column>
+
+                            <p:column headerText="Descripción" filterBy="#{inDetalle.producto.descripcion}">
+                                <p:outputLabel value="#{inDetalle.producto.descripcion}"/>
+                            </p:column>
+
+                            <p:column headerText="Cantidad">
+                                <p:outputLabel value="#{inDetalle.cantidad} #{inDetalle.producto.detalleUnidad.abreviatura}"/>
+                            </p:column>
+
+                            <p:column headerText="Precio Unitaro">
+                                <p:outputLabel value="#{inDetalle.precioUnitario}">
+                                    <f:convertNumber minFractionDigits="2" currencySymbol="$" type="currency"/>
+                                </p:outputLabel>
+                            </p:column>
+
+                            <p:column headerText="Subtotal">
+                                <p:outputLabel value="#{detalleIngresoFormBean.subtotal(inDetalle)}">
+                                    <f:convertNumber minFractionDigits="2" currencySymbol="$" type="currency"/>
+                                </p:outputLabel>
+                            </p:column>
+                        </p:dataTable>
+                        <p:panel>
+                            <p:outputLabel value="Total: "/>
+                            <p:outputLabel value="#{detalleIngresoFormBean.total()}">
+                                <f:convertNumber minFractionDigits="2" currencySymbol="$" type="currency"/>
+                            </p:outputLabel>
+                        </p:panel>
+                        <p:commandButton value="Terminar" action="#{detalleIngresoFormBean.guardarDetalleIngreso()}" update=":grwMensaje"/>
+                        <p:commandButton value="Cancelar" action="#{encabezadoIngresoFormBean.removerEncabezadoActual()}"/>
+                    </h:form>
+                </p:panel>
+                
+
+                <!--Dialogo de nuevo Detalle Ingreso-->
+
+                <p:dialog widgetVar="widNuevo" modal="true" header="Nuevo Detalle">
+                    <h:form id="frmNuevoDetalle">
+                        <p:panelGrid columns="2">
+                            <p:outputLabel for="inProducto" value="Producto: " />
+                            <p:panel>
+                                <p:inputText id="inProducto" onkeypress="return false" value="#{detalleIngresoFormBean.detalleIngresoBean.detalleIngreso.producto.descripcion}" required="true"/>
+                                <p:commandButton icon="ui-icon-search" oncomplete="PF('widProducto').show()"/>
+                            </p:panel>
+
+                            <p:outputLabel for="inCantidadEntero" value="Cantidad: " rendered="#{detalleIngresoFormBean.abreviatura()}"/>
+
+                            <p:outputLabel for="inCantidadDecimal" value="Cantidad: " rendered="#{!detalleIngresoFormBean.abreviatura()}"/>
+
+                            <p:panel rendered="#{detalleIngresoFormBean.abreviatura()}">
+                                <p:inputText title="Solo entero 8 digitos" id="inCantidadEntero" value="#{detalleIngresoFormBean.detalleIngresoBean.detalleIngreso.cantidad}" 
+                                             disabled="#{detalleIngresoFormBean.detalleIngresoBean.detalleIngreso.producto.descripcion eq null }" required="true" >
+                                    <f:convertNumber integerOnly="true" maxIntegerDigits="8"/>
+                                </p:inputText>
+                                <p:outputLabel value=" #{detalleIngresoFormBean.detalleIngresoBean.detalleIngreso.producto.detalleUnidad.abreviatura}"/>
+                                <p:tooltip for="inCantidadEntero" showEvent="focus" hideEvent="blur" />
+                            </p:panel>
+
+                            <p:panel rendered="#{!detalleIngresoFormBean.abreviatura()}">
+                                <p:inputText title="Permite 8 digitos enteros y 2 decimales." id="inCantidadDecimal" value="#{detalleIngresoFormBean.detalleIngresoBean.detalleIngreso.cantidad}" 
+                                             disabled="#{detalleIngresoFormBean.detalleIngresoBean.detalleIngreso.producto.descripcion eq null }" required="true" >
+                                    <f:convertNumber maxFractionDigits="2" maxIntegerDigits="8"/>
+                                </p:inputText>
+                                <p:outputLabel value=" #{detalleIngresoFormBean.detalleIngresoBean.detalleIngreso.producto.detalleUnidad.abreviatura}"/>
+                                <p:tooltip for="inCantidadDecimal" showEvent="focus" hideEvent="blur" />
+                            </p:panel>
+
+                            <p:outputLabel for="inPU" value="Precio Unitario: "/>
+                            <p:panel>
+                                <p:outputLabel value="$ "/>
+                                <p:inputText title="Para separar los decimales, debe usar la coma." id="inPU" value="#{detalleIngresoFormBean.detalleIngresoBean.detalleIngreso.precioUnitario}" disabled="#{detalleIngresoFormBean.detalleIngresoBean.detalleIngreso.producto.descripcion eq null }" required="true">
+                                    <f:convertNumber maxIntegerDigits="8" maxFractionDigits="2"/>
+                                </p:inputText>
+                                <p:tooltip for="inPU" showEvent="focus" hideEvent="blur" />
+                            </p:panel>
+
+                            <p:commandButton value="Aceptar" actionListener="#{detalleIngresoFormBean.guardarDetalle()}" update=":grwMensaje :frmNuevoDetalle :frmDetalle"/>
+                            <p:commandButton value="Cancelar" oncomplete="PF('widNuevo').hide()"/>
+                        </p:panelGrid>
+                    </h:form>
+                </p:dialog>
+                
+                <!--Dialogo de editar Detalle Ingreso-->
+                
+                <p:dialog widgetVar="widEditar" modal="true" header="Editar Detalle">
+                    <h:form id="frmEditarDetalle">
+                        <p:panelGrid columns="2">
+                            <p:outputLabel for="edProducto" value="Producto: " />
+                            <p:panel>
+                                <p:inputText id="edProducto" onkeypress="return false" value="#{detalleIngresoFormBean.detalleIngresoBean.detalleIngreso.producto.descripcion}" required="true"/>
+                                <p:commandButton icon="ui-icon-search" oncomplete="PF('widProducto').show()"/>
+                            </p:panel>
+
+                            <p:outputLabel for="edCantidadEntero" value="Cantidad: " rendered="#{detalleIngresoFormBean.abreviatura()}"/>
+
+                            <p:outputLabel for="edCantidadDecimal" value="Cantidad: " rendered="#{!detalleIngresoFormBean.abreviatura()}"/>
+
+                            <p:panel rendered="#{detalleIngresoFormBean.abreviatura()}">
+                                <p:inputText title="Solo entero 8 digitos" id="edCantidadEntero" value="#{detalleIngresoFormBean.detalleIngresoBean.detalleIngreso.cantidad}" 
+                                             disabled="#{detalleIngresoFormBean.detalleIngresoBean.detalleIngreso.producto.descripcion eq null }" required="true" >
+                                    <f:convertNumber integerOnly="true" maxIntegerDigits="8"/>
+                                </p:inputText>
+                                <p:outputLabel value=" #{detalleIngresoFormBean.detalleIngresoBean.detalleIngreso.producto.detalleUnidad.abreviatura}"/>
+                                <p:tooltip for="edCantidadEntero" showEvent="focus" hideEvent="blur" />
+                            </p:panel>
+
+                            <p:panel rendered="#{!detalleIngresoFormBean.abreviatura()}">
+                                <p:inputText title="Permite 8 digitos enteros y 2 decimales." id="edCantidadDecimal" value="#{detalleIngresoFormBean.detalleIngresoBean.detalleIngreso.cantidad}" 
+                                             disabled="#{detalleIngresoFormBean.detalleIngresoBean.detalleIngreso.producto.descripcion eq null }" required="true" >
+                                    <f:convertNumber maxFractionDigits="2" maxIntegerDigits="8"/>
+                                </p:inputText>
+                                <p:outputLabel value=" #{detalleIngresoFormBean.detalleIngresoBean.detalleIngreso.producto.detalleUnidad.abreviatura}"/>
+                                <p:tooltip for="edCantidadDecimal" showEvent="focus" hideEvent="blur" />
+                            </p:panel>
+
+                            <p:outputLabel for="edPU" value="Precio Unitario: "/>
+                            <p:panel>
+                                <p:outputLabel value="$ "/>
+                                <p:inputText title="Para separar los decimales, debe usar la coma." id="edPU" value="#{detalleIngresoFormBean.detalleIngresoBean.detalleIngreso.precioUnitario}" disabled="#{detalleIngresoFormBean.detalleIngresoBean.detalleIngreso.producto.descripcion eq null }" required="true">
+                                    <f:convertNumber maxIntegerDigits="8" maxFractionDigits="2"/>
+                                </p:inputText>
+                                <p:tooltip for="edPU" showEvent="focus" hideEvent="blur" />
+                            </p:panel>
+
+                            <p:commandButton value="Aceptar" actionListener="#{detalleIngresoFormBean.modificarDetalle()}" update=":grwMensaje :frmEditarDetalle :frmDetalle"/>
+                            <p:commandButton value="Cancelar" oncomplete="PF('widEditar').hide()" update=":frmDetalle"/>
+                        </p:panelGrid>
+                    </h:form>
+                </p:dialog>
+
+                <!--Dialogo para la busqueda de producto-->
+
+                <p:dialog widgetVar="widProducto" modal="true" header="Productos Disponibles">
+                    <h:form id="frmProducto">
+                        <p:dataTable value="#{productoFormBean.tablaProductoHabilitado}" var="pro" paginator="true" selectionMode="single"
+                                     rows="8" rowKey="#{pro.idProducto}" reflow="true" emptyMessage="No se encontraron elementos." selection="#{productoFormBean.producto}">
+
+                            <p:column headerText="Código">
+                                <p:outputLabel value="#{pro.idProducto}"/>
+                            </p:column>
+
+                            <p:column headerText="Producto">
+                                <p:outputLabel value="#{pro.descripcion}"/>
+                            </p:column>
+
+                            <p:column headerText="Tipo">
+                                <p:outputLabel value="#{pro.tipoProducto.descripcion}"/>
+                            </p:column>
+
+                            <p:column headerText="Marca">
+                                <p:outputLabel value="#{pro.marca}"/>
+                            </p:column>
+
+                            <p:column headerText="Stock">
+                                <p:outputLabel value="#{pro.stock} #{pro.detalleUnidad.abreviatura}"/>
+                            </p:column>
+
+                        </p:dataTable>
+                        <p:commandButton actionListener="#{detalleIngresoFormBean.guardarProducto()}" update=":frmNuevoDetalle :frmEditarDetalle :grwMensaje" value="Aceptar">
+                            <p:resetInput target=":frmNuevoDetalle"/>
+                        </p:commandButton>
+                        <p:commandButton oncomplete="PF('widProducto').hide()" value="Cancelar"/>
+                    </h:form>
+                </p:dialog>
+
+            </ui:define>
+        </ui:composition>
+
+    </body>
+</html>

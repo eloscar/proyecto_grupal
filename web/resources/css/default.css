@@ -1,0 +1,35 @@
+@font-face{
+    font-family: "DilleniaUPC";
+    src: url("/proyecto_grupal/resources/fonts/UPCDL.TTF") format("truetype");
+}
+@font-face{
+    font-family: "Gadugi";
+    src: url("/proyecto_grupal/resources/fonts/gadugi.ttf") format("truetype");
+}
+
+.ui-widget *{
+    font-family: "Gadugi";
+    font-size: 1em;
+}
+
+.ui-widget {
+    font-size: 14px;
+}
+body {
+    font-family: "Gadugi";
+    background-color: #ffffff;
+    color: #000000;
+    font-size: 14px;
+}
+.pnlgrid{
+    width: 98%; 
+    height: 100%;
+    margin: 1%;
+}
+.pnlgrid tr{
+    background: transparent;
+}
+
+.subrayado span{
+    text-decoration: underline;
+}

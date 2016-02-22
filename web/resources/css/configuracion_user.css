@@ -1,0 +1,9 @@
+/*.ui-grid-col-10{
+    text-align: right;
+}
+.ui-grid-col-5{
+    text-align: left;
+}*/
+#panelConfiguracion{
+    max-width: 320px;
+}

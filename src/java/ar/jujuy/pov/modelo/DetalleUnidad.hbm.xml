@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 03/12/2015 04:50:57 by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="ar.jujuy.pov.modelo.dominio.DetalleUnidad" table="detalle_unidad" schema="public" optimistic-lock="version">
+        <id name="idUnidad" type="short">
+            <column name="id_unidad" />
+            <generator class="identity" />
+        </id>
+        <property name="descripcion" type="string">
+            <column name="descripcion" length="15" not-null="true" />
+        </property>
+        <property name="abreviatura" type="string">
+            <column name="abreviatura" length="6" />
+        </property>
+    </class>
+</hibernate-mapping>

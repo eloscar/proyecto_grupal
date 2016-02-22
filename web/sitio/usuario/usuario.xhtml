@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+    <body>
+
+        <ui:composition template="../../resources/Template.xhtml">
+
+            <ui:define name="title">
+                Usuario
+            </ui:define>
+            <ui:define name="content">
+                <h:form>
+                    <p:dataTable paginator="true" id="tbUsuario" var="u" value="#{usuarioFormBean.tablaUsuario}" reflow="true" rows="12" style="text-align: center">
+                        <p:column headerText="Avatar" width="60">
+                            <p:graphicImage value="#{usuarioFormBean.imagen(u)}" height="50" width="50" class="avatar"/>
+                        </p:column>
+                        <p:column headerText="D.N.I.">
+                            <p:outputLabel value="#{u.dni}"/>
+                        </p:column>
+                        <p:column headerText="User">
+                            <p:outputLabel value="#{u.userName}"/>
+                        </p:column>
+                        <p:column headerText="N y A">
+                            <p:outputLabel value="#{u.apellido}, #{u.nombre}"/>
+                        </p:column>
+                        <p:column headerText="Rol">
+                            <p:outputLabel value="#{u.rol.descripcion}" />
+                        </p:column>
+                        <p:column headerText="Estado">
+                            <p:commandButton value="Habilitado" rendered="#{u.estado}" style="background: greenyellow ;color: black ;" actionListener="#{usuarioFormBean.deshabilitar(u)}" update="tbUsuario"/>
+                            <p:commandButton value="Deshabilitado" rendered="#{!u.estado}" style="background: orangered;color: black ;" actionListener="#{usuarioFormBean.habilitar(u)}" update="tbUsuario"/>
+                        </p:column>
+                    </p:dataTable>
+                </h:form>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

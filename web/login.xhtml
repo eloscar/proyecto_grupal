@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Login</title>
+        <h:outputStylesheet name="/css/cssLayout.css"/>
+        <h:outputStylesheet name="/css/animate.css"/>
+        <h:outputStylesheet name="/css/default.css"/>
+        <h:outputStylesheet name="/css/login.css"/>
+    </h:head>
+    <h:body>
+        <p:growl id="grwMensaje" widgetVar="mensaje" />
+        <h:form id="frmLogin">
+            <div class="centrar">
+            <p:messages id="messages" globalOnly="true" showDetail="true" />
+            <p:panel header="Ingresar" >
+                <p:panelGrid columns="2">
+                    <p:outputLabel value="Usuario:"/>
+                    <p:inputText value="#{loginFormBean.user}" required="true" requiredMessage="Usuarior requerido."/>
+                    <p:outputLabel value="Contraseña:"/>
+                    <p:password value="#{loginFormBean.password}" required="true" requiredMessage="Contraseña requerida."/>
+                    <br/>
+                    <p:commandButton id="btnIngresar" value="Ingresar" action="#{loginFormBean.validarAcceso()}" update="frmLogin :grwMensaje" styleClass="animated rubberBand"/>
+                </p:panelGrid>
+            </p:panel>
+            </div>
+        </h:form>
+    </h:body>
+</html>
+

@@ -1,0 +1,279 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="../../resources/Template.xhtml">
+
+            <ui:define name="title">
+                Ingreso
+            </ui:define>
+            <ui:define name="hoja_estilos">
+                <h:outputScript name="./calendar_es.js"/>
+            </ui:define>
+            <ui:define name="content">
+                <p:panel style="text-align: center">
+                    <h:form id="frmFiltro">
+                        <div class="ui-grid ui-grid-responsive">
+                            <div class="ui-grid-row">
+                                <div class="ui-grid-col-12" align="center">
+
+                                    <p:panel header="Buscar" style="max-width: 800px">
+                                        <p:panelGrid columns="4" layout="grid">
+
+                                            <p:outputLabel value="Factura: "/>
+                                            <p:inputText value="#{encabezadoIngresoFormBean.eiBuscado.numeroFactura}"/>
+
+                                            <p:outputLabel value="Nº Orden: "/>
+                                            <p:inputText value="#{encabezadoIngresoFormBean.eiBuscado.numeroOrden}"/>
+
+                                            <p:outputLabel value="Nº Recibo: "/>
+                                            <p:inputText value="#{encabezadoIngresoFormBean.eiBuscado.numeroRecibo}"/>
+
+                                            <p:outputLabel value="Proveedor: "/>
+                                            <p:panel style="padding: 0px ; width: 163px " >
+                                                <p:inputText id="fillProveedor" value="#{encabezadoIngresoFormBean.eiBuscado.proveedor.descripcion}" onkeypress="return false" style="width: 90px;"/>
+                                                <p:commandButton icon="ui-icon-search" oncomplete="PF('widProveedor2').show()"/>
+                                            </p:panel>
+
+                                        </p:panelGrid>
+                                        
+                                        <p:commandButton value="Filtrar" actionListener="#{encabezadoIngresoFormBean.filtrarTabla()}" update=":frmIngreso"/>
+                                        <p:commandButton value="Limpiar" actionListener="#{encabezadoIngresoFormBean.limpiarFiltro()}" update="frmFiltro"/>
+                                    </p:panel>
+
+                                </div>
+                            </div>
+                        </div>
+                    </h:form>
+                    <h:form>
+                        <p:commandButton value="Nuevo Ingreso" actionListener="#{encabezadoIngresoFormBean.limpiarNuevo()}" update=":frmNuevo">
+                            <p:resetInput target=":frmNuevo"/>
+                        </p:commandButton>
+                    </h:form>
+
+                    <h:form id="frmIngreso">
+                        <p:dataTable value="#{encabezadoIngresoFormBean.tabla}" var="ing" paginator="true"  selection="#{encabezadoIngresoFormBean.seleccionado}"
+                                     rowKey="#{ing.idIngreso}" selectionMode="single" rows="8" reflow="true">
+                            <p:column headerText="Factura">
+                                <p:outputLabel value="#{ing.numeroFactura}"/>
+                            </p:column>
+                            <p:column headerText="Nº Orden">
+                                <p:outputLabel value="#{ing.numeroOrden}"/>
+                            </p:column>
+                            <p:column headerText="Nº Recibo">
+                                <p:outputLabel value="#{ing.numeroRecibo}"/>
+                            </p:column>
+                            <p:column headerText="Proveedor">
+                                <p:outputLabel value="#{ing.proveedor.descripcion}"/>
+                            </p:column>
+                            <p:column headerText="Fecha Compra">
+                                <p:outputLabel value="#{ing.fechaCompra}">
+                                    <f:convertDateTime pattern="dd/MM/YYYY"/>
+                                </p:outputLabel>
+                            </p:column>
+                            <p:column headerText="Fecha Creación">
+                                <p:outputLabel value="#{ing.fechaCreacion}">
+                                    <f:convertDateTime pattern="dd/MM/YYYY"/>
+                                </p:outputLabel>
+                            </p:column>
+                            <p:column width="30">
+                                <p:commandButton icon="ui-icon-search" actionListener="#{detalleIngresoFormBean.cargarListaDetalles(ing)}" update="frmDetalle" oncomplete="PF('widDetalle').show()"/>
+                            </p:column>
+                            <p:column headerText="Exportar">
+                                <p:commandLink actionListener="#{report.generarReporte_FacturaIN_PDF(ing)}" ajax="false" >
+                                    <p:graphicImage value="/resources/iconosExport/office_pdf.png" width="48"/>
+                                </p:commandLink>
+                                <p:commandLink actionListener="#{report.generarReporte_FacturaIN_EXCEL(ing)}" ajax="false" >
+                                    <p:graphicImage value="/resources/iconosExport/oficina_xls.png" width="48"/>
+                                </p:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                    </h:form>
+
+                    <!--Dialog de nuevo Registro de Ingreso-->
+
+                    <p:dialog widgetVar="widNuevoIngreso" header="Nuevo Registro de Ingreso" modal="true">
+                        <h:form id="frmNuevo">
+                            <p:panelGrid columns="2" id="pnlgIngreso" layout="grid">
+                                <p:outputLabel for="inFactura" value="Nº Factura:"/>
+                                <p:inputText id="inFactura" value="#{encabezadoIngresoFormBean.eib.encabezadoIngreso.numeroFactura}" required="true"/>
+
+                                <p:outputLabel for="inCalendar" value="Fecha de Compra:"/>
+                                <p:calendar id="inCalendar" pattern="dd/MM/yyyy" mask="true" maxdate="#{encabezadoIngresoFormBean.hoy}"
+                                            size="10" maxlength="10" locale="es" required="true"
+                                            value="#{encabezadoIngresoFormBean.eib.encabezadoIngreso.fechaCompra}"/>
+
+                                <p:outputLabel value="Nº Orden:"/>
+                                <p:panel>
+                                    <p:inputText id="inOrden" value="#{encabezadoIngresoFormBean.eib.encabezadoIngreso.numeroOrden}" disabled="#{!encabezadoIngresoFormBean.orden}"/>
+                                    <p:selectBooleanCheckbox value="#{encabezadoIngresoFormBean.orden}">
+                                        <p:ajax event="change" update="inOrden"/>
+                                    </p:selectBooleanCheckbox>
+                                </p:panel>
+
+                                <p:outputLabel value="Nº Recibo:"/>
+                                <p:panel>
+                                    <p:inputText id="inRecibo" value="#{encabezadoIngresoFormBean.eib.encabezadoIngreso.numeroRecibo}" disabled="#{!encabezadoIngresoFormBean.recibo}"/>
+                                    <p:selectBooleanCheckbox value="#{encabezadoIngresoFormBean.recibo}">
+                                        <p:ajax event="change" update="inRecibo"/>
+                                    </p:selectBooleanCheckbox>
+                                </p:panel>
+
+                                <p:outputLabel for="inProveedor" value="Proveedor:"/>
+                                <p:panel>
+                                    <p:inputText id="inProveedor" value="#{encabezadoIngresoFormBean.eib.encabezadoIngreso.proveedor.descripcion}" required="true" onkeypress="return false"/>
+                                    <p:commandButton icon="ui-icon-search" oncomplete="PF('widProveedor').show()"/>
+                                </p:panel>
+
+                                <p:outputLabel for="inDestino" value="Destino:"/>
+                                <p:panel>
+                                    <p:inputText id="inDestino" value="#{encabezadoIngresoFormBean.eib.encabezadoIngreso.destino.nombre}" required="true"/>
+                                    <p:commandButton icon="ui-icon-search" oncomplete="PF('widDestino').show()"/>
+                                </p:panel>
+
+                                <p:outputLabel for="inSupervisor" value="Supervisor:"/>
+                                <p:selectOneMenu id="inSupervisor" value="#{encabezadoIngresoFormBean.eib.encabezadoIngreso.encargadoResponsableId}" required="true">
+                                    <f:selectItem itemLabel="Seleccione" itemValue="" />
+                                    <f:selectItems value="#{usuarioFormBean.usuarioSupervisores}" var="u_super" 
+                                                   itemValue="#{u_super.idUsuario}" itemLabel="#{u_super.apellido}, #{u_super.nombre}">
+                                    </f:selectItems>
+                                    <p:column>
+                                        <p:outputLabel value="#{u_super.apellido}, #{u_super.nombre}"/>
+                                    </p:column>
+                                </p:selectOneMenu>
+
+                                <p:outputLabel for="inEncDeposito" value="Encargado Deposito:"/>
+                                <p:selectOneMenu id="inEncDeposito" value="#{encabezadoIngresoFormBean.eib.encabezadoIngreso.encargadoDepositoId}" required="true">
+                                    <f:selectItem itemLabel="Seleccione" itemValue="" />
+                                    <f:selectItems value="#{usuarioFormBean.encargadoDepositos}" var="u_dep" 
+                                                   itemValue="#{u_dep.idUsuario}" itemLabel="#{u_dep.apellido}, #{u_dep.nombre}">
+                                    </f:selectItems>
+                                    <p:column>
+                                        <p:outputLabel value="#{u_dep.apellido}, #{u_dep.nombre}"/>
+                                    </p:column>
+                                </p:selectOneMenu>
+                            </p:panelGrid>
+                            <p:commandButton value="Aceptar" update="frmNuevo :grwMensaje :frmFiltro" action="#{encabezadoIngresoFormBean.guardarEncabezado()}"/>
+                            <p:commandButton value="Cancelar" oncomplete="PF('widNuevoIngreso').hide()"/>
+                        </h:form>
+                    </p:dialog>
+
+                    <!--Dialog de Proveedores cargados en el sistema-->
+
+                    <p:dialog widgetVar="widProveedor2" header="Proveedor" modal="true">
+                        <h:form id="frmProveedor2" style="max-width: 510px">
+                            <p:dataTable id="tblProveedor2" value="#{proveedorFormBean.tablaProveedro}" var="prov" selection="#{proveedorFormBean.proveedor}" selectionMode="single" rowKey="#{prov.idProveedor}"
+                                         emptyMessage="No se encontraron elementos." paginator="true" rows="8"  reflow="true">
+
+                                <p:column headerText="Código">
+                                    <p:outputLabel value="#{prov.idProveedor}"/>
+                                </p:column>
+
+                                <p:column headerText="Proveedor"> 
+                                    <p:outputLabel value="#{prov.descripcion}"/>
+                                </p:column>
+
+                            </p:dataTable>                            
+
+                            <p:commandButton value="Aceptar" actionListener="#{encabezadoIngresoFormBean.guardarProveedor2()}" update=":frmFiltro:fillProveedor"/>
+                            <p:commandButton value="Cancelar" oncomplete="PF('widProveedor2').hide()"/>
+                        </h:form>
+                    </p:dialog>
+
+                    <p:dialog widgetVar="widProveedor" header="Proveedor" modal="true">
+                        <h:form id="frmProveedor" style="max-width: 510px">
+                            <p:dataTable id="tblProveedor" value="#{proveedorFormBean.tablaProveedro}" var="prov" selection="#{proveedorFormBean.proveedor}" selectionMode="single" rowKey="#{prov.idProveedor}"
+                                         emptyMessage="No se encontraron elementos." paginator="true" rows="8"  reflow="true">
+
+                                <p:column headerText="Código">
+                                    <p:outputLabel value="#{prov.idProveedor}"/>
+                                </p:column>
+
+                                <p:column headerText="Proveedor"> 
+                                    <p:outputLabel value="#{prov.descripcion}"/>
+                                </p:column>
+
+                            </p:dataTable>                            
+
+                            <p:commandButton value="Aceptar" actionListener="#{encabezadoIngresoFormBean.guardarProveedor()}" update=":frmNuevo:inProveedor">
+                                <p:resetInput target=":frmNuevo"/>
+                            </p:commandButton>
+                            <p:commandButton value="Cancelar" oncomplete="PF('widProveedor').hide()"/>
+                        </h:form>
+                    </p:dialog>
+
+
+                    <!--Dialog de Destinos cargados en el sistema-->
+
+                    <p:dialog widgetVar="widDestino" header="Destino" modal="true" >
+                        <h:form id="frmDestino" style="max-width: 510px">
+                            <p:dataTable id="tblDestino" var="des" value="#{destinoFormBean.tablaDestino}" selection="#{destinoFormBean.destino}"  selectionMode="single" rows="8" reflow="true"
+                                         filteredValue="#{destinoFormBean.tablaDestinoFiltro}" emptyMessage="No se encontraron elementos." rowKey="#{des.idDestino}" paginator="true" >
+                                <p:column headerText="Persona/Destinatario" filterMatchMode="contains" filterBy="#{des.nombre}">
+                                    <p:outputLabel value="#{des.nombre}"/>
+                                </p:column>
+                                <p:column headerText="Dirección">
+                                    <p:outputLabel value="#{des.direccion}"/>
+                                </p:column>
+                            </p:dataTable>
+                            <p:commandButton value="Aceptar" actionListener="#{encabezadoIngresoFormBean.guardarDestino()}" update=":frmNuevo:inDestino">
+                                <p:resetInput target=":frmNuevo"/>
+                            </p:commandButton>
+                            <p:commandButton value="Cancelar" oncomplete="PF('widDestino').hide()"/>
+                        </h:form>
+                    </p:dialog>
+
+                    <p:dialog header="Detalle" widgetVar="widDetalle" modal="true">
+                        <h:form id="frmDetalle" style="max-width: 720px">
+                            <p:dataTable id="dtDetalle" value="#{detalleIngresoFormBean.tablaDetalleIngreso}" paginator="true" reflow="true" rows="12" var="d">
+                                <p:column headerText="Código">
+                                    <p:outputLabel value="#{d.producto.idProducto}"/>
+                                </p:column>
+                                <p:column headerText="Descripción">
+                                    <p:outputLabel value="#{d.producto.descripcion}"/>
+                                </p:column>
+                                <p:column headerText="P.U.">
+                                    <p:outputLabel value="#{d.precioUnitario}">
+                                        <f:convertNumber currencySymbol="$ " minFractionDigits="2" type="currency"/>
+                                    </p:outputLabel>
+                                </p:column>
+
+                                <p:column headerText="Cantidad" rendered="#{detalleIngresoFormBean.abreviaturaTabla(d.producto.detalleUnidad)}">
+                                    <p:outputLabel value="#{d.cantidad}">
+                                        <f:convertNumber integerOnly="true"/>
+                                    </p:outputLabel>
+                                    <p:outputLabel value=" #{d.producto.detalleUnidad.abreviatura}"/>
+                                </p:column>
+
+                                <p:column headerText="Cantidad" rendered="#{!detalleIngresoFormBean.abreviaturaTabla(d.producto.detalleUnidad)}">
+                                    <p:outputLabel value="#{d.cantidad}">
+                                        <f:convertNumber minFractionDigits="3"/>
+                                    </p:outputLabel>
+                                    <p:outputLabel value=" #{d.producto.detalleUnidad.abreviatura}"/>
+                                </p:column>
+                                <p:column headerText="Subtotal">
+                                    <p:outputLabel value="#{detalleIngresoFormBean.subtotal(d)}">
+                                        <f:convertNumber currencySymbol="$ " minFractionDigits="2" type="currency"/>
+                                    </p:outputLabel>
+                                </p:column>
+                            </p:dataTable>
+                            <p:commandButton value="Aceptar" oncomplete="PF('widDetalle').hide()"/>
+                            <p:outputLabel value="Total: " />
+                            <p:outputLabel value="#{detalleIngresoFormBean.total()}" >
+                                <f:convertNumber currencySymbol="$ " minFractionDigits="2" type="currency"/>
+                            </p:outputLabel>
+                        </h:form>
+                    </p:dialog>
+                </p:panel>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

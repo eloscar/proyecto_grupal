@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 03/12/2015 04:50:57 by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="ar.jujuy.pov.modelo.dominio.EncabezadoEgreso" table="encabezado_egreso" schema="public" optimistic-lock="version">
+        <id name="idEgreso" type="long">
+            <column name="id_egreso" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="destino" class="ar.jujuy.pov.modelo.dominio.Destino" fetch="join">
+            <column name="destino_id" not-null="true" />
+        </many-to-one>
+        <many-to-one name="usuario" class="ar.jujuy.pov.modelo.dominio.Usuario" fetch="join">
+            <column name="encargado_carga_id" not-null="true" />
+        </many-to-one>
+        <property name="fechaCreacion" type="timestamp">
+            <column name="fecha_creacion" length="29" not-null="true" />
+        </property>
+        <property name="fechaEgreso" type="timestamp">
+            <column name="fecha_egreso" length="29" not-null="true" />
+        </property>
+        <property name="ordenEntrega" type="java.lang.Integer">
+            <column name="orden_entrega" />
+        </property>
+        <property name="expendiente" type="java.lang.Integer">
+            <column name="expendiente" />
+        </property>
+        <property name="ordenRecepcion" type="string">
+            <column name="orden_recepcion" length="15" />
+        </property>
+        <property name="encargadoDepositoId" type="int">
+            <column name="encargado_deposito_id" not-null="true" />
+        </property>
+        <property name="encargadoResponableId" type="int">
+            <column name="encargado_responable_id" not-null="true" />
+        </property>
+    </class>
+</hibernate-mapping>
