@@ -66,3 +66,4 @@ $RECYCLE.BIN/
 /build/*
 /librerias/*
 /nbproject/*
+/build.xml
