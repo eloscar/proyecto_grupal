@@ -171,7 +171,6 @@ public class ProductoFormBean implements java.io.Serializable {
     public void guardarTipo() {
         FacesContext context = FacesContext.getCurrentInstance();
         TipoProducto tp = context.getApplication().evaluateExpressionGet(context, "#{tipoProductoFormBean.tpb.tipoProducto}", TipoProducto.class);
-        System.out.println(tp);
         pb.getProducto().setTipoProducto(tp);
         RequestContext.getCurrentInstance().execute("PF('widTipo').hide()");
     }
@@ -179,7 +178,6 @@ public class ProductoFormBean implements java.io.Serializable {
     public void guardarMarca() {
         FacesContext context = FacesContext.getCurrentInstance();
         Marca m = context.getApplication().evaluateExpressionGet(context, "#{marcaFormBean.mb.marca}", Marca.class);
-        System.out.println(m);
         pb.getProducto().setMarca(m);
         RequestContext.getCurrentInstance().execute("PF('widMarca').hide()");
     }
@@ -227,4 +225,10 @@ public class ProductoFormBean implements java.io.Serializable {
         }
     }
     
+    public String generarCodigo(long id){
+        String codigo="P-0000000000000000000";
+        String num=String.valueOf(id);
+        codigo=codigo.substring(0, codigo.length()-num.length())+num;
+        return codigo;
+    }
 }

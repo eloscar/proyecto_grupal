@@ -63,7 +63,7 @@
                                                    itemValue="#{productos.idProducto}" />
                                 </p:selectOneMenu>
 
-                                <p:commandButton id="submit" value="Buscar" actionListener="#{productoFormBean.buscar}"  ajax="true" update="frmProducto " style="margin-top: 0px;" styleClass="boton">
+                                <p:commandButton id="submit" value="Buscar" actionListener="#{productoFormBean.buscar()}"  ajax="true" update="frmProducto " style="margin-top: 0px;" styleClass="boton">
                                 </p:commandButton>           		       
 
                             </h:panelGrid>
@@ -89,31 +89,23 @@
                                      value="#{productoFormBean.tabla}" rows="6" paginator="true" style="margin-bottom:20px">
 
                             <p:column headerText="Barcode">
-                                <p:barcode value="P-01234567895" type="code128"/>
+                                <p:barcode value="#{productoFormBean.generarCodigo(producto.idProducto)}" type="code128" format="png"/>
                             </p:column>
                             
                             <p:column headerText="Descripcion" > 
-                                <h:outputText value="#{producto.descripcion}"  />
+                                <p:outputLabel value="#{producto.descripcion}"  />
                             </p:column>
 
                             <p:column headerText="Tipo de Producto">
-                                <h:outputText value="#{producto.tipoProducto.descripcion}" />
+                                <p:outputLabel value="#{producto.tipoProducto.descripcion}" />
                             </p:column>
 
                             <p:column headerText="Marca">
-                                <h:outputText value="#{producto.marca.descripcion}" />
-                            </p:column>
-
-                            <p:column headerText="Unidad de medida">
-                                <h:outputText value="#{producto.detalleUnidad.descripcion}" />
+                                <p:outputLabel value="#{producto.marca.descripcion}" />
                             </p:column>
 
                             <p:column headerText="Stock">
-                                <h:outputText value="#{producto.stock}" />
-                            </p:column>
-
-                            <p:column headerText="Estado" >
-                                <h:outputText value="#{producto.estado}" />
+                                <p:outputLabel value="#{producto.stock} #{producto.detalleUnidad.abreviatura}" />
                             </p:column>
 
                             <p:column headerText="Acciones">
@@ -124,10 +116,6 @@
                                                                  target="#{productoFormBean.pb.producto}" />
                                 </p:commandButton>
 
-                                <p:commandButton id="btnModificarProducto" icon="ui-icon-pencil"
-                                                 action="#{productoFormBean.preModificarProducto}"
-                                                 actionListener="#{productoFormBean.pb.setProducto(producto)}">
-                                </p:commandButton>
 
                                 <p:commandButton id="btnBajaProducto" icon="ui-icon-closethick"
                                                  oncomplete="PF('confirmarBajaProducto').show()"
