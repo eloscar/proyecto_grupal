@@ -25,6 +25,15 @@
 
                                     <p:panel header="Buscar" style="max-width: 800px">
                                         <p:panelGrid columns="4" layout="grid">
+                                            <p:outputLabel value="Desde: "/>
+                                            <p:calendar pattern="dd/MM/yyyy" mask="true" maxdate="#{encabezadoIngresoFormBean.hoy}"
+                                            size="10" maxlength="10" locale="es"
+                                            value="#{encabezadoIngresoFormBean.desde}"/>
+                                            
+                                            <p:outputLabel value="Hasta: "/>
+                                            <p:calendar pattern="dd/MM/yyyy" mask="true" maxdate="#{encabezadoIngresoFormBean.hoy}"
+                                            size="10" maxlength="10" locale="es"
+                                            value="#{encabezadoIngresoFormBean.hasta}"/>
 
                                             <p:outputLabel value="Factura: "/>
                                             <p:inputText value="#{encabezadoIngresoFormBean.eiBuscado.numeroFactura}"/>
@@ -59,25 +68,25 @@
 
                     <h:form id="frmIngreso">
                         <p:dataTable value="#{encabezadoIngresoFormBean.tabla}" var="ing" paginator="true"  selection="#{encabezadoIngresoFormBean.seleccionado}"
-                                     rowKey="#{ing.idIngreso}" selectionMode="single" rows="8" reflow="true">
-                            <p:column headerText="Factura">
+                                     rowKey="#{ing.idIngreso}" selectionMode="single" rows="8" reflow="true" sortMode="multiple">
+                            <p:column headerText="Factura" sortBy="#{ing.numeroFactura}">
                                 <p:outputLabel value="#{ing.numeroFactura}"/>
                             </p:column>
-                            <p:column headerText="Nº Orden">
+                            <p:column headerText="Nº Orden" sortBy="#{ing.numeroOrden}">
                                 <p:outputLabel value="#{ing.numeroOrden}"/>
                             </p:column>
-                            <p:column headerText="Nº Recibo">
+                            <p:column headerText="Nº Recibo" sortBy="#{ing.numeroRecibo}">
                                 <p:outputLabel value="#{ing.numeroRecibo}"/>
                             </p:column>
-                            <p:column headerText="Proveedor">
+                            <p:column headerText="Proveedor" sortBy="#{ing.proveedor}">
                                 <p:outputLabel value="#{ing.proveedor.descripcion}"/>
                             </p:column>
-                            <p:column headerText="Fecha Compra">
+                            <p:column headerText="Fecha Compra" sortBy="#{ing.fechaCompra}">
                                 <p:outputLabel value="#{ing.fechaCompra}">
                                     <f:convertDateTime pattern="dd/MM/YYYY"/>
                                 </p:outputLabel>
                             </p:column>
-                            <p:column headerText="Fecha Creación">
+                            <p:column headerText="Fecha Creación" sortBy="#{ing.fechaCreacion}">
                                 <p:outputLabel value="#{ing.fechaCreacion}">
                                     <f:convertDateTime pattern="dd/MM/YYYY"/>
                                 </p:outputLabel>
