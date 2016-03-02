@@ -78,7 +78,7 @@
                             <p:column headerText="Nº Recibo" sortBy="#{ing.numeroRecibo}">
                                 <p:outputLabel value="#{ing.numeroRecibo}"/>
                             </p:column>
-                            <p:column headerText="Proveedor" sortBy="#{ing.proveedor}">
+                            <p:column headerText="Proveedor" sortBy="#{ing.proveedor.descripcion}">
                                 <p:outputLabel value="#{ing.proveedor.descripcion}"/>
                             </p:column>
                             <p:column headerText="Fecha Compra" sortBy="#{ing.fechaCompra}">

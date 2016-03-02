@@ -89,7 +89,11 @@
                                      value="#{productoFormBean.tabla}" rows="6" paginator="true" style="margin-bottom:20px">
 
                             <p:column headerText="Barcode">
-                                <p:barcode value="#{productoFormBean.generarCodigo(producto.idProducto)}" type="code128" format="png"/>
+                                <p:barcode value="#{productoFormBean.generarCodigo(producto.idProducto)}" type="code128" format="png" width="160"/>
+                            </p:column>
+                            
+                            <p:column headerText="QRcode">
+                                <p:barcode value="#{productoFormBean.generarCodigo(producto.idProducto)}" type="qr"/>
                             </p:column>
                             
                             <p:column headerText="Descripcion" > 
