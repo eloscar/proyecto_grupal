@@ -5,20 +5,21 @@
  */
 package ar.jujuy.pov.controlador.beans.formbeans;
 
-import ar.jujuy.pov.controlador.beans.ProductoBean;
 import ar.jujuy.pov.dao.ProductoDAO;
 import ar.jujuy.pov.dao.impl.ProductoDAOImpl;
+import ar.jujuy.pov.modelo.dominio.DetalleUnidad;
 import ar.jujuy.pov.modelo.dominio.Marca;
 import ar.jujuy.pov.modelo.dominio.Producto;
 import ar.jujuy.pov.modelo.dominio.TipoProducto;
+import java.io.File;
 import java.util.List;
+
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import org.primefaces.context.RequestContext;
-import org.primefaces.event.RowEditEvent;
 
 /**
  *
@@ -28,34 +29,35 @@ import org.primefaces.event.RowEditEvent;
 @ViewScoped
 public class ProductoFormBean implements java.io.Serializable {
 
-    @ManagedProperty(value = "#{productoBean}")
-    private ProductoBean pb;
     private List<Producto> tabla;
     private List<Producto> tablaProductoHabilitado;
+    private Producto p;
     private Producto producto;
     private ProductoDAO pdao;
 
-    private boolean alta;
+
     private Integer tipoId;
     private Integer marcaId;
     private Integer productoId;
     private List<Producto> tablaFiltrada;
     private Integer idUnidad;
-
     public ProductoFormBean() {
         super();
+        p = new Producto();
+        p.setDetalleUnidad(new DetalleUnidad());
+
         pdao = new ProductoDAOImpl();
         tabla = pdao.getAll();
-        tablaProductoHabilitado=pdao.getAllTrue();
+        tablaProductoHabilitado = pdao.getAllTrue();
+    }
+//    Getter y Setter de los atributos
+
+    public Producto getProducto() {
+        return producto;
     }
 
-     //    Getter y Setter de los atributos
-    public ProductoBean getPb() {
-        return pb;
-    }
-
-    public void setPb(ProductoBean pb) {
-        this.pb = pb;
+    public void setProducto(Producto producto) {
+        this.producto = producto;
     }
 
     public List<Producto> getTabla() {
@@ -66,12 +68,20 @@ public class ProductoFormBean implements java.io.Serializable {
         this.tabla = tabla;
     }
 
-    public boolean isAlta() {
-        return alta;
+    public Producto getP() {
+        return p;
     }
 
-    public void setAlta(boolean alta) {
-        this.alta = alta;
+    public void setP(Producto p) {
+        this.p = p;
+    }
+
+    public List<Producto> getTablaProductoHabilitado() {
+        return tablaProductoHabilitado;
+    }
+
+    public void setTablaProductoHabilitado(List<Producto> tablaProductoHabilitado) {
+        this.tablaProductoHabilitado = tablaProductoHabilitado;
     }
 
     public Integer getTipoId() {
@@ -114,71 +124,32 @@ public class ProductoFormBean implements java.io.Serializable {
         this.idUnidad = idUnidad;
     }
 
-    public Producto getProducto() {
-        return producto;
-    }
-
-    public void setProducto(Producto producto) {
-        this.producto = producto;
-    }
-
-    public List<Producto> getTablaProductoHabilitado() {
-        return tablaProductoHabilitado;
-    }
-
-    public void setTablaProductoHabilitado(List<Producto> tablaProductoHabilitado) {
-        this.tablaProductoHabilitado = tablaProductoHabilitado;
-    }
+    
     
     //    Metodos de la clase
-    
     public void limpiarNuevo() {
-        pb.setProducto(new Producto());
+        p = new Producto();
         RequestContext.getCurrentInstance().execute("PF('widNuevoProducto').show()");
     }
 
-    public void onRowEdit(RowEditEvent event) {
-        pdao.modificar(pb.getProducto());
-        FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Editado con exito.", "");
-        FacesContext.getCurrentInstance().addMessage(null, msg);
-    }
-
-    public void onRowCancel(RowEditEvent event) {
-        FacesMessage msg = new FacesMessage("Edicion cancelada.", "");
-        FacesContext.getCurrentInstance().addMessage(null, msg);
-    }
-
     public void guardar() {
-
-        pdao.alta(pb.getProducto());
+        pdao.alta(p);
         tabla = pdao.getAll();
-
-        FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "Producto guardado con exito.", "");
-        FacesContext.getCurrentInstance().addMessage(null, facesMessage);
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Operación terminada", "Producto guardado con exito."));
         RequestContext.getCurrentInstance().execute("PF('widNuevoProducto').hide()");
-
-    }
-
-    public void eliminar() {
-
-        pdao.eliminar(pb.getProducto());
-        tabla = pdao.getAll();
-        FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "Producto eliminado con exito.", "");
-        FacesContext.getCurrentInstance().addMessage(null, facesMessage);
-        RequestContext.getCurrentInstance().execute("PF('confirmarBajaProducto').hide()");
     }
 
     public void guardarTipo() {
         FacesContext context = FacesContext.getCurrentInstance();
         TipoProducto tp = context.getApplication().evaluateExpressionGet(context, "#{tipoProductoFormBean.tpb.tipoProducto}", TipoProducto.class);
-        pb.getProducto().setTipoProducto(tp);
+        p.setTipoProducto(tp);
         RequestContext.getCurrentInstance().execute("PF('widTipo').hide()");
     }
 
     public void guardarMarca() {
         FacesContext context = FacesContext.getCurrentInstance();
         Marca m = context.getApplication().evaluateExpressionGet(context, "#{marcaFormBean.mb.marca}", Marca.class);
-        pb.getProducto().setMarca(m);
+        p.setMarca(m);
         RequestContext.getCurrentInstance().execute("PF('widMarca').hide()");
     }
 
@@ -187,21 +158,18 @@ public class ProductoFormBean implements java.io.Serializable {
     }
 
     //Con estos metos cargo un nuevo producto
-    public String preCargarProducto() {
-
-        alta = true;
-        pb.setProducto(new Producto());
-
-        return "productoAyM.xhtml?faces-redirect=true";
+    public void preCargarProducto() {
+        p = new Producto();
+        RequestContext.getCurrentInstance().execute("PF(widNuevoProducto).show()");
     }
 
     public String cargarProducto() {
 
         String resultado = null;
 
-        if (pb.getProducto() != null) {
+        if (p != null) {
 
-            pdao.alta(pb.getProducto());
+            pdao.alta(p);
             tabla = pdao.getAll();
             FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, "Producto guardado con exito.", "");
             FacesContext.getCurrentInstance().addMessage(null, facesMessage);
@@ -218,17 +186,28 @@ public class ProductoFormBean implements java.io.Serializable {
 
     //Este metodo nos permite nos permite preferir el cuadro de dialogo entre alta y modificacion de usuario
     public void visualizarVentanaConfirmacion() {
-        if (isAlta() == true) {
-            RequestContext.getCurrentInstance().execute("PF('confirmarAltaProducto').hide()");
-        } else {
-            RequestContext.getCurrentInstance().execute("PF('confirmarModificacionProducto').hide()");
-        }
+//        if (isAlta() == true) {
+//            RequestContext.getCurrentInstance().execute("PF('confirmarAltaProducto').hide()");
+//        } else {
+//            RequestContext.getCurrentInstance().execute("PF('confirmarModificacionProducto').hide()");
+//        }
     }
-    
-    public String generarCodigo(long id){
-        String codigo="P-0000000000000000000";
-        String num=String.valueOf(id);
-        codigo=codigo.substring(0, codigo.length()-num.length())+num;
+
+    public String generarCodigo(long id) {
+        String codigo = "P-0000000000000000000";
+        String num = String.valueOf(id);
+        codigo = codigo.substring(0, codigo.length() - num.length()) + num;
         return codigo;
     }
+
+    public String imagen(Producto p) {
+        if (p.getImagen() != null) {
+            File f = new File(FacesContext.getCurrentInstance().getExternalContext().getRealPath("") + File.separator + "galeria" + File.separator + "usuario" + File.separator + p.getImagen());
+            if (f.exists()) {
+                return "/galeria/producto/" + p.getImagen();
+            }
+        }
+        return "/resources/img/sin_imagen.png";
+    }
+
 }

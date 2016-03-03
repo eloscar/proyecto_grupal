@@ -11,7 +11,7 @@
         <ui:composition template="../../resources/Template.xhtml">
 
             <ui:define name="hoja_estilos">
-                
+
             </ui:define>
 
             <ui:define name="title">
@@ -19,179 +19,129 @@
             </ui:define>
             <ui:define name="content">
 
+                <p:growl id="growlProducto" globalOnly="true" showDetail="true" autoUpdate="true" /> 
 
-                <h:form id="frmProducto">
+                <!-- *********************************FORMULARIO PARA BUSCAR PRODUCTOS*********************************************************** -->
 
-                    <p:growl id="growlProducto" globalOnly="true" showDetail="true" autoUpdate="true" />
+                <h:form id="frmFiltro">
+                    <p:panel header="Busqueda de Productos" >
+                        <p:panelGrid columns="8" layout="grid" >
 
-                    <!-- *********************************FORMULARIO PARA BUSCAR PRODUCTOS*********************************************************** -->
+                            <p:outputLabel value="Descripción:"/>
+                            <p:inputText />
 
-                    <div class="buscar" align="center">
+                            <p:outputLabel value="Tipo de Producto" />
 
-                        <p:panel header="Busqueda de Productos" >
+                            <p:selectOneMenu id="selectTipoProducto" value="#{productoFormBean.tipoId}">
 
-                            <h:panelGrid columns="7" cellpadding="5">
+                                <f:selectItem itemLabel="Seleccionar" itemValue=""></f:selectItem>
+                                <f:selectItems value="#{tipoProductoFormBean.tabla}"
+                                               var="tipos" itemLabel="#{tipos.descripcion}"
+                                               itemValue="#{tipos.idTipoProducto}" />
 
-                                <p:outputLabel value="Tipo de Producto" />
-
-                                <p:selectOneMenu id="selectTipoProducto"
-                                                 value="#{productoFormBean.tipoId}">
-                                    <f:selectItem itemLabel="Seleccionar" itemValue=""></f:selectItem>
-                                    <f:selectItems value="#{tipoProductoFormBean.tabla}"
-                                                   var="tipos" itemLabel="#{tipos.descripcion}"
-                                                   itemValue="#{tipos.idTipoProducto}" />
-
-                                </p:selectOneMenu>
+                            </p:selectOneMenu>
 
 
+                            <p:outputLabel value="Marca: " />
+                            <p:selectOneMenu value="#{productoFormBean.marcaId}">
 
-                                <p:outputLabel value="Marca: " />
-                                <p:selectOneMenu id="marca" 
-                                                 value="#{productoFormBean.marcaId}">
-                                    <f:selectItem itemValue="" itemLabel=""></f:selectItem>
-                                    <f:selectItems value="#{marcaFormBean.tabla}"
-                                                   var="marcas" itemLabel="#{marcas.descripcion}"
-                                                   itemValue="#{marcas.idMarca}" />
-                                </p:selectOneMenu>
+                                <f:selectItem itemValue="" itemLabel="Seleccionar"/>
+                                <f:selectItems value="#{marcaFormBean.tabla}"
+                                               var="marcas" itemLabel="#{marcas.descripcion}"
+                                               itemValue="#{marcas.idMarca}" />
+                            </p:selectOneMenu>
 
-                                <p:outputLabel value="Nombre: " />
-                                <p:selectOneMenu id="nombre" 
-                                                 value="#{productoFormBean.productoId}">
-                                    <f:selectItem itemValue="" itemLabel=""></f:selectItem>
-                                    <f:selectItems value="#{productoFormBean.tablaFiltrada}"
-                                                   var="productos" itemLabel="#{productos.descripcion}"
-                                                   itemValue="#{productos.idProducto}" />
-                                </p:selectOneMenu>
+                            <p:commandButton value="Buscar" actionListener="#{productoFormBean.buscar()}"  ajax="true" update="frmProducto " />
 
-                                <p:commandButton id="submit" value="Buscar" actionListener="#{productoFormBean.buscar()}"  ajax="true" update="frmProducto " style="margin-top: 0px;" styleClass="boton">
-                                </p:commandButton>           		       
-
-                            </h:panelGrid>
-
-                        </p:panel>
-
-                    </div>
-                    <!-- **************************************Boton Alta************************************************ -->
+                        </p:panelGrid>
+                        <p:commandButton value="Nuevo" action="#{productoFormBean.preCargarProducto()}" update=":frmNuevo" />
+                    </p:panel>
+                </h:form>
+                <!-- **************************************Boton Alta************************************************ -->
 
 
-
-                    <div class="botonAlta">
-                        <p:commandButton value="Nuevo" action="#{productoFormBean.preCargarProducto}" update=":frmNuevo" >
-                        </p:commandButton>
-
-                    </div>
-
-                    <!-- ******************************************TABLA DE PRODUCTOS********************************************* -->
-
-                    <div class="tabla">	
-
-                        <p:dataTable id="tablaProducto" var="producto" reflow="true" editable="true"
-                                     value="#{productoFormBean.tabla}" rows="6" paginator="true" style="margin-bottom:20px">
-
-                            <p:column headerText="Barcode">
-                                <p:barcode value="#{productoFormBean.generarCodigo(producto.idProducto)}" type="code128" format="png" width="160"/>
-                            </p:column>
-                            
-                            <p:column headerText="QRcode">
-                                <p:barcode value="#{productoFormBean.generarCodigo(producto.idProducto)}" type="qr"/>
-                            </p:column>
-                            
-                            <p:column headerText="Descripcion" > 
-                                <p:outputLabel value="#{producto.descripcion}"  />
-                            </p:column>
-
-                            <p:column headerText="Tipo de Producto">
-                                <p:outputLabel value="#{producto.tipoProducto.descripcion}" />
-                            </p:column>
-
-                            <p:column headerText="Marca">
-                                <p:outputLabel value="#{producto.marca.descripcion}" />
-                            </p:column>
-
-                            <p:column headerText="Stock">
-                                <p:outputLabel value="#{producto.stock} #{producto.detalleUnidad.abreviatura}" />
-                            </p:column>
-
-                            <p:column headerText="Acciones">
-
-                                <p:commandButton update=":f" oncomplete="PF('dlg').show()"
-                                                 icon="ui-icon-search" title="Ver Detalles">
-                                    <f:setPropertyActionListener value="#{producto}"
-                                                                 target="#{productoFormBean.pb.producto}" />
-                                </p:commandButton>
+                <!-- ******************************************TABLA DE PRODUCTOS********************************************* -->
+                <h:form id="frmProducto" enctype="multipart/form-data">
 
 
-                                <p:commandButton id="btnBajaProducto" icon="ui-icon-closethick"
-                                                 oncomplete="PF('confirmarBajaProducto').show()"
-                                                 update=":frmConfirmacionBaja"
-                                                 actionListener="#{productoFormBean.pb.setProducto(producto)}"
-                                                 ajax="true">
-                                </p:commandButton>
+                    <p:dataTable id="tablaProducto" var="prod" reflow="true" 
+                                 value="#{productoFormBean.tabla}" rows="6" paginator="true" >
 
-                            </p:column>
+                        <p:column headerText="Imagen" width="125">
+                            <p:graphicImage value="#{productoFormBean.imagen(prod)}" width="120"/>
+                        </p:column>
 
-                        </p:dataTable>
-                    </div>
+                        <p:column headerText="Código" width="90">
+                            <p:barcode type="qr" value="#{productoFormBean.generarCodigo(prod.idProducto)}" width="80" format="png" title="#{productoFormBean.generarCodigo(prod.idProducto)}"/>
+                        </p:column>
+
+                        <p:column headerText="Descripción">
+                            <p:outputLabel value="#{prod.descripcion}"/>
+                        </p:column>
+
+                        <p:column headerText="Marca">
+                            <p:outputLabel value="#{prod.marca.descripcion}" />
+                        </p:column>
+
+                        <p:column headerText="Tipo">
+                            <p:outputLabel value="#{prod.tipoProducto.descripcion}"/>
+                        </p:column>
+
+                        <p:column headerText="Stock">
+                            <p:outputLabel value="#{prod.stock} #{prod.detalleUnidad.abreviatura}" />
+                        </p:column>
+
+                        <p:column headerText="Acciones">
+
+                            <p:commandButton update=":f" oncomplete="PF('dlg').show()"
+                                             icon="ui-icon-search" title="Ver Detalles">
+                                <f:setPropertyActionListener value="#{prod}"
+                                                             target="#{productoFormBean.p}" />
+                            </p:commandButton>
+
+                        </p:column>
+
+                    </p:dataTable>
 
                 </h:form>
 
 
                 <!-- **********************POPUP QUE MUESTRA LOS DETALLES DE UN PRODUCTO******************** -->
 
-                <h:form id="f">
-                    <p:dialog id="dlg" widgetVar="dlg" header="Detalle del Producto"
-                              modal="true" showEffect="explode" hideEffect="explode">
 
-                        <h:panelGrid columns="2">
-                            <p:outputLabel value="CODIGO:" />
-                            <h:outputText value="#{productoFormBean.pb.producto.idProducto}" />
-                            <p:outputLabel value="NOMBRE" />
-                            <h:outputText value="#{productoFormBean.pb.producto.descripcion}" />
-                            <p:outputLabel value="Tipo" />
-                            <h:outputText value="#{productoFormBean.pb.producto.tipoProducto.descripcion}" />
+                <p:dialog widgetVar="dlg" header="Detalle del Producto"
+                          modal="true" showEffect="explode" hideEffect="explode">
+                    <h:form id="f" style="text-align: center;min-width: 400px">
+
+                        <p:panelGrid columns="2" layout="grid">
+                            <f:facet name="header">
+                                <p:graphicImage value="#{productoFormBean.imagen(productoFormBean.p)}" width="200" style="background: grey"/>
+                            </f:facet>
+
+                            <p:outputLabel value="Código:" />
+                            <p:outputLabel value="#{productoFormBean.generarCodigo(productoFormBean.p.idProducto)}" />
+
+                            <p:outputLabel value="Descripción:" />
+                            <p:outputLabel value="#{productoFormBean.p.descripcion}" />
+
+                            <p:outputLabel value="Tipo:" />
+                            <p:outputLabel value="#{productoFormBean.p.tipoProducto.descripcion}" />
+
                             <p:outputLabel value="Marca:" /> 
-                            <h:outputText value="#{productoFormBean.pb.producto.marca.descripcion}"/>
-
-
-                            <p:outputLabel value="Detalle Unidad:" />
-                            <h:outputText
-                                value="#{productoFormBean.pb.producto.detalleUnidad.descripcion}" />
+                            <p:outputLabel value="#{productoFormBean.p.marca.descripcion}"/>
 
                             <p:outputLabel value="Stock:" />
-                            <h:outputText value="#{productoFormBean.pb.producto.stock}" />
-                            <p:outputLabel value="ESTADO" />
-                            <h:outputText value="#{productoFormBean.pb.producto.estado}" />
+                            <h:outputText value="#{productoFormBean.p.stock} #{productoFormBean.p.detalleUnidad.abreviatura}" />
 
-                            <p:outputLabel value="Imagen"></p:outputLabel>
+                            <p:outputLabel value="Estado:" />
+                            <p:outputLabel value="#{productoFormBean.p.estado}" />
 
+                        </p:panelGrid>
+                        <p:commandButton oncomplete="PF('dlg').hide()" value="Cerrar"/>
+                    </h:form>
 
+                </p:dialog>
 
-                            <p:commandButton type="submit"
-                                             onclick="dlg.hide()" value="Aceptar"
-                                             ajax="true" update=""></p:commandButton>
-                            <p:commandButton value="Modificar" ></p:commandButton>
-                        </h:panelGrid>
-
-                    </p:dialog>
-                </h:form>
-
-
-                <!-- **************************************POPUP CONFIRMACION DE BAJA************************************************ -->
-
-                <h:form id="frmConfirmacionBaja">
-
-                    <p:confirmDialog id="dlgConfirmarBajaProducto" 
-                                     message="¿Esta seguro que desea eliminar el producto?"
-                                     header="Eliminar Producto" severity="alert"
-                                     widgetVar="confirmarBajaProducto">
-                        <p:commandButton value="SI" icon="ui-icon-check"
-                                         update="" ajax="true"
-                                         actionListener="#{productoFormBean.eliminar()}" />
-                        <p:commandButton value="NO" icon="ui-icon-closethick"
-                                         oncomplete="PF('confirmarBajaProducto').hide()" />
-                    </p:confirmDialog>
-
-                </h:form>
 
                 <!-- **************************************POPUP ALTA************************************************ -->
 
@@ -200,10 +150,10 @@
                         <p:panelGrid columns="2" id="pnlgProducto">
 
                             <p:outputLabel value="Descripcion:"/>
-                            <p:inputText value="#{productoFormBean.pb.producto.descripcion}"/>
+                            <p:inputText value="#{productoFormBean.p.descripcion}"/>
 
                             <p:commandButton value="Aceptar" icon="ui-icon-check"
-                                             update=":frmProducto :frmProducto:growlProducto" ajax="true"
+                                             update=":frmProducto :grwMensaje" ajax="true"
                                              actionListener="#{productoFormBean.guardar()}" />
                             <p:commandButton value="Cancelar" icon="ui-icon-closethick"
                                              oncomplete="PF('widNuevoProducto').hide()" />
