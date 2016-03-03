@@ -13,7 +13,7 @@
                 Usuario
             </ui:define>
             <ui:define name="content">
-                <h:form>
+                <h:form enctype="multipart/form-data">
                     <p:dataTable paginator="true" id="tbUsuario" var="u" value="#{usuarioFormBean.tablaUsuario}" reflow="true" rows="12" style="text-align: center">
                         <p:column headerText="Avatar" width="60">
                             <p:graphicImage value="#{usuarioFormBean.imagen(u)}" height="50" width="50" class="avatar"/>
